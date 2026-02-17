@@ -1,725 +1,207 @@
 <!DOCTYPE html>
 
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Retirement Account Planner</title>
-    <script crossorigin="anonymous"
-        src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script crossorigin="anonymous"
-        src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script crossorigin="anonymous"
-        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script crossorigin="anonymous"
-        src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap"
-        rel="stylesheet">
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0
-        }
-
-        :root {
-            --bg: #faf8f6;
-            --surface: #ffffff;
-            --surface2: #f4f2ef;
-            --border: #ddd9d3;
-            --text: #111111;
-            --text2: #444444;
-            --text3: #777777;
-            --primary: #2d5a3d;
-            --primary-light: #3a7a52;
-            --primary-bg: #e8f2ec;
-            --accent: #b07a2e;
-            --accent-bg: #fdf3e6;
-            --danger: #c0392b;
-            --danger-bg: #fce8e6;
-            --info: #2c6e8a;
-            --info-bg: #e6f0f7;
-            --success: #257a45;
-            --success-bg: #e6f5ed;
-            --radius: 10px;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1)
-        }
-
-        html {
-            font-size: 15px;
-            -webkit-text-size-adjust: 100%
-        }
-
-        body {
-            font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            min-height: 100vh
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: 'Fraunces', Georgia, serif;
-            font-weight: 500;
-            line-height: 1.3;
-            color: var(--text)
-        }
-
-        input,
-        select,
-        button {
-            font-family: inherit;
-            font-size: inherit
-        }
-
-        .ctr {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px
-        }
-
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            padding: 24px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow)
-        }
-
-        .card-hdr {
-            display: -webkit-flex;
-            display: flex;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-justify-content: space-between;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            -webkit-flex-wrap: wrap;
-            flex-wrap: wrap
-        }
-
-        .card-hdr>* {
-            margin: 4px
-        }
-
-        .card h2 {
-            font-size: 1.25rem;
-            color: var(--text)
-        }
-
-        .card h3 {
-            font-size: 1.05rem;
-            margin-bottom: 8px;
-            color: var(--text)
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: .75rem;
-            font-weight: 600
-        }
-
-        .bg {
-            background: var(--success-bg);
-            color: var(--success)
-        }
-
-        .ba {
-            background: var(--accent-bg);
-            color: var(--accent)
-        }
-
-        .br {
-            background: var(--danger-bg);
-            color: var(--danger)
-        }
-
-        .bb {
-            background: var(--info-bg);
-            color: var(--info)
-        }
-
-        .btn {
-            display: -webkit-inline-flex;
-            display: inline-flex;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-justify-content: center;
-            justify-content: center;
-            padding: 10px 22px;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: .9rem;
-            cursor: pointer;
-            border: none;
-            -webkit-transition: all .15s;
-            transition: all .15s
-        }
-
-        .btn1 {
-            background: var(--primary);
-            color: #fff
-        }
-
-        .btn1:hover {
-            background: var(--primary-light)
-        }
-
-        .btn2 {
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--border)
-        }
-
-        .btn2:hover {
-            background: var(--surface2)
-        }
-
-        .btns {
-            padding: 6px 14px;
-            font-size: .8rem
-        }
-
-        .fg {
-            margin-bottom: 14px
-        }
-
-        .fl {
-            display: block;
-            font-size: .8rem;
-            font-weight: 600;
-            color: var(--text2);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            letter-spacing: .04em
-        }
-
-        .fi {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: var(--surface);
-            color: var(--text);
-            font-size: .95rem;
-            -webkit-transition: border .15s;
-            transition: border .15s
-        }
-
-        .fi:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(45, 90, 61, .1)
-        }
-
-        .fr {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 12px
-        }
-
-        select.fi {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23444' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 32px
-        }
-
-        .tw {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 0 -24px;
-            padding: 0 24px
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: .85rem
-        }
-
-        th {
-            text-align: left;
-            padding: 8px 10px;
-            font-weight: 600;
-            color: var(--text2);
-            border-bottom: 2px solid var(--border);
-            font-size: .75rem;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            white-space: nowrap
-        }
-
-        td {
-            padding: 8px 10px;
-            border-bottom: 1px solid var(--border);
-            white-space: nowrap;
-            color: var(--text)
-        }
-
-        tr:last-child td {
-            border-bottom: none
-        }
-
-        .tr {
-            text-align: right
-        }
-
-        .tc {
-            text-align: center
-        }
-
-        .tg {
-            color: var(--success)
-        }
-
-        .trd {
-            color: var(--danger)
-        }
-
-        .ta {
-            color: var(--accent)
-        }
-
-        .tm {
-            color: var(--text3)
-        }
-
-        .ts {
-            font-size: .8rem
-        }
-
-        .g2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 16px
-        }
-
-        .g3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-gap: 16px
-        }
-
-        .g4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-gap: 12px
-        }
-
-        .sc {
-            background: var(--surface2);
-            border-radius: 8px;
-            padding: 14px 16px;
-            border: 1px solid var(--border)
-        }
-
-        .sl {
-            font-size: .72rem;
-            font-weight: 600;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: .05em
-        }
-
-        .sv {
-            font-family: 'Fraunces', serif;
-            font-size: 1.4rem;
-            font-weight: 500;
-            margin-top: 2px;
-            color: var(--text)
-        }
-
-        .ch {
-            cursor: pointer;
-            padding: 10px 0;
-            font-weight: 600;
-            font-size: .95rem;
-            -webkit-user-select: none;
-            user-select: none;
-            display: -webkit-flex;
-            display: flex;
-            -webkit-align-items: center;
-            align-items: center;
-            color: var(--text);
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 8px
-        }
-
-        .ch>* {
-            margin-right: 8px
-        }
-
-        .ca {
-            -webkit-transition: -webkit-transform .2s;
-            transition: transform .2s;
-            font-size: .7rem;
-            display: inline-block
-        }
-
-        .cao {
-            -webkit-transform: rotate(90deg);
-            transform: rotate(90deg)
-        }
-
-        .cb {
-            padding: 8px 0 16px 0;
-            font-size: .88rem;
-            color: var(--text2);
-            line-height: 1.7
-        }
-
-        .mo {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, .5);
-            display: -webkit-flex;
-            display: flex;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-justify-content: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px
-        }
-
-        .mc {
-            background: var(--surface);
-            border-radius: var(--radius);
-            max-width: 600px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-            padding: 28px
-        }
-
-        .ec {
-            display: -webkit-inline-flex;
-            display: inline-flex;
-            -webkit-align-items: center;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: .78rem;
-            font-weight: 600;
-            cursor: pointer;
-            -webkit-transition: all .15s;
-            transition: all .15s;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            margin: 2px
-        }
-
-        .ec:hover {
-            border-color: var(--primary);
-            background: var(--primary-bg)
-        }
-
-        .stabs {
-            display: -webkit-flex;
-            display: flex;
-            background: var(--surface2);
-            border-radius: 8px;
-            padding: 3px;
-            border: 1px solid var(--border);
-            -webkit-flex-wrap: wrap;
-            flex-wrap: wrap
-        }
-
-        .stabs>* {
-            margin: 2px
-        }
-
-        .stab {
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: .8rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            color: var(--text3);
-            -webkit-transition: all .15s;
-            transition: all .15s
-        }
-
-        .stab.act {
-            background: var(--surface);
-            color: var(--text);
-            box-shadow: var(--shadow)
-        }
-
-        .is {
-            display: -webkit-flex;
-            display: flex;
-            -webkit-align-items: flex-end;
-            align-items: flex-end;
-            margin-bottom: 10px;
-            padding: 10px 12px;
-            background: var(--surface2);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            -webkit-flex-wrap: wrap;
-            flex-wrap: wrap
-        }
-
-        .is>* {
-            margin: 4px
-        }
-
-        .if {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            grid-gap: 8px;
-            -webkit-flex: 1;
-            flex: 1;
-            min-width: 0
-        }
-
-        .hero {
-            text-align: center;
-            padding: 48px 20px 32px
-        }
-
-        .hero h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            color: var(--text)
-        }
-
-        .hero p {
-            color: var(--text2);
-            font-size: 1rem;
-            max-width: 520px;
-            margin: 0 auto
-        }
-
-        .ha {
-            color: var(--primary)
-        }
-
-        .dv {
-            height: 1px;
-            background: var(--border);
-            margin: 20px 0
-        }
-
-        .ab {
-            margin-top: 16px;
-            padding: 12px 16px;
-            border-radius: 8px
-        }
-
-        .abd {
-            background: var(--danger-bg);
-            border: 1px solid #f5c6c2
-        }
-
-        .abs {
-            background: var(--success-bg);
-            border: 1px solid #b6e3c8
-        }
-
-        .rg {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 16px;
-            margin-top: 8px
-        }
-
-        .sell {
-            color: var(--danger);
-            font-weight: 600
-        }
-
-        .buy {
-            color: var(--success);
-            font-weight: 600
-        }
-
-        @media(max-width:768px) {
-
-            .fr,
-            .g2,
-            .g3,
-            .g4,
-            .rg,
-            .if {
-                grid-template-columns: 1fr
-            }
-
-            .hero h1 {
-                font-size: 1.6rem
-            }
-
-            .hero {
-                padding: 32px 10px 20px
-            }
-
-            .card {
-                padding: 16px
-            }
-
-            .sv {
-                font-size: 1.15rem
-            }
-
-            .ctr {
-                padding: 0 12px
-            }
-
-            table {
-                font-size: .78rem
-            }
-
-            td,
-            th {
-                padding: 6px
-            }
-
-            .tw {
-                margin: 0 -16px;
-                padding: 0 16px
-            }
-        }
-
-        @media print {
-            .np {
-                display: none !important
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Retirement Account Planner</title>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf8f6;--surface:#ffffff;--surface2:#f4f2ef;--border:#ddd9d3;
+  --text:#111111;--text2:#444444;--text3:#777777;
+  --primary:#2d5a3d;--primary-light:#3a7a52;--primary-bg:#e8f2ec;
+  --accent:#b07a2e;--accent-bg:#fdf3e6;
+  --danger:#c0392b;--danger-bg:#fce8e6;
+  --info:#2c6e8a;--info-bg:#e6f0f7;
+  --success:#257a45;--success-bg:#e6f5ed;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.1)
+}
+html{font-size:15px;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;font-weight:500;line-height:1.3;color:var(--text)}
+input,select,button{font-family:inherit;font-size:inherit}
+.ctr{max-width:1100px;margin:0 auto;padding:0 20px}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-hdr{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.card-hdr>*{margin:4px}
+.card h2{font-size:1.25rem;color:var(--text)}.card h3{font-size:1.05rem;margin-bottom:8px;color:var(--text)}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.bg{background:var(--success-bg);color:var(--success)}.ba{background:var(--accent-bg);color:var(--accent)}.br{background:var(--danger-bg);color:var(--danger)}.bb{background:var(--info-bg);color:var(--info)}
+.btn{display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:10px 22px;border-radius:var(--radius);font-weight:600;font-size:.9rem;cursor:pointer;border:none;-webkit-transition:all .15s;transition:all .15s}
+.btn1{background:var(--primary);color:#fff}.btn1:hover{background:var(--primary-light)}
+.btn2{background:var(--surface);color:var(--text);border:1px solid var(--border)}.btn2:hover{background:var(--surface2)}
+.btns{padding:6px 14px;font-size:.8rem}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.fi{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:.95rem;-webkit-transition:border .15s;transition:border .15s}
+.fi:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(45,90,61,.1)}
+.fr{display:grid;grid-template-columns:1fr 1fr;grid-gap:12px}
+select.fi{-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23444' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -24px;padding:0 24px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;padding:8px 10px;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.tr{text-align:right}.tc{text-align:center}.tg{color:var(--success)}.trd{color:var(--danger)}.ta{color:var(--accent)}.tm{color:var(--text3)}.ts{font-size:.8rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;grid-gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;grid-gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);grid-gap:12px}
+.sc{background:var(--surface2);border-radius:8px;padding:14px 16px;border:1px solid var(--border)}
+.sl{font-size:.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.sv{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:500;margin-top:2px;color:var(--text)}
+.ch{cursor:pointer;padding:10px 0;font-weight:600;font-size:.95rem;-webkit-user-select:none;user-select:none;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;color:var(--text);border-bottom:1px solid var(--border);margin-bottom:8px}
+.ch>*{margin-right:8px}
+.ca{-webkit-transition:-webkit-transform .2s;transition:transform .2s;font-size:.7rem;display:inline-block}
+.cao{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
+.cb{padding:8px 0 16px 0;font-size:.88rem;color:var(--text2);line-height:1.7}
+.mo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;z-index:1000;padding:20px}
+.mc{background:var(--surface);border-radius:var(--radius);max-width:600px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);padding:28px}
+.ec{display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;padding:4px 10px;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;-webkit-transition:all .15s;transition:all .15s;border:1px solid var(--border);background:var(--surface);margin:2px}
+.ec:hover{border-color:var(--primary);background:var(--primary-bg)}
+.stabs{display:-webkit-flex;display:flex;background:var(--surface2);border-radius:8px;padding:3px;border:1px solid var(--border);-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.stabs>*{margin:2px}
+.stab{padding:6px 14px;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text3);-webkit-transition:all .15s;transition:all .15s}
+.stab.act{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.is{display:-webkit-flex;display:flex;-webkit-align-items:flex-end;align-items:flex-end;margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.is>*{margin:4px}
+.if{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;grid-gap:8px;-webkit-flex:1;flex:1;min-width:0}
+.hero{text-align:center;padding:48px 20px 32px}
+.hero h1{font-size:2.2rem;margin-bottom:8px;color:var(--text)}
+.hero p{color:var(--text2);font-size:1rem;max-width:520px;margin:0 auto}
+.ha{color:var(--primary)}
+.dv{height:1px;background:var(--border);margin:20px 0}
+.ab{margin-top:16px;padding:12px 16px;border-radius:8px}
+.abd{background:var(--danger-bg);border:1px solid #f5c6c2}
+.abs{background:var(--success-bg);border:1px solid #b6e3c8}
+.rg{display:grid;grid-template-columns:1fr 1fr;grid-gap:16px;margin-top:8px}
+.sell{color:var(--danger);font-weight:600}
+.buy{color:var(--success);font-weight:600}
+@media(max-width:768px){
+  .fr,.g2,.g3,.g4,.rg,.if{grid-template-columns:1fr}
+  .hero h1{font-size:1.6rem}.hero{padding:32px 10px 20px}
+  .card{padding:16px}.sv{font-size:1.15rem}.ctr{padding:0 12px}
+  table{font-size:.78rem}td,th{padding:6px}
+  .tw{margin:0 -16px;padding:0 16px}
+}
+@media print{.np{display:none !important}}
+</style>
 </head>
-
 <body>
-    <div id="root"></div>
-    <noscript>
-        <p style="text-align:center;padding:40px;font-family:sans-serif">Please enable JavaScript to use this
-            application.</p>
-    </noscript>
-    <script>
-        /* All functions defined at top-level scope for Safari compatibility */
-        var useState = React.useState;
-        var useEffect = React.useEffect;
-        var useMemo = React.useMemo;
-        var useRef = React.useRef;
-        var h = React.createElement;
+<div id="root"></div>
+<noscript><p style="text-align:center;padding:40px;font-family:sans-serif">Please enable JavaScript to use this application.</p></noscript>
+<script>
+/* All functions defined at top-level scope for Safari compatibility */
+var useState=React.useState;
+var useEffect=React.useEffect;
+var useMemo=React.useMemo;
+var useRef=React.useRef;
+var h=React.createElement;
 
-        var STORE_KEY =“retirewise_v2”;
-        function saveInputs(inp) { try { localStorage.setItem(STORE_KEY, JSON.stringify(inp)); } catch (e) { } }
-        function loadInputs() { try { var s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+var STORE_KEY=“retirewise_v2”;
+function saveInputs(inp){try{localStorage.setItem(STORE_KEY,JSON.stringify(inp));}catch(e){}}
+function loadInputs(){try{var s=localStorage.getItem(STORE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 
-        var ETFS = {
-            VTI: { t:“VTI”, nm:“Vanguard Total Stock Market ETF”, cat:“US Total Market”, er: .03, dy: 1.3, desc:“Tracks CRSP US Total Market Index covering ~4,000 stocks.”, strat:“Broad exposure to entire U.S.equity market.Core diversified holding.”, hold: [“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Meta”], ret: { y1: 26.1, y3: 8.9, y5: 14.2, y10: 12.1 }, risk:“Moderate”, avg: 10.2, sd: 15.5, best: 33.4, worst: -36.4},
-        VUG: { t:“VUG”, nm:“Vanguard Growth ETF”, cat:“US Large Growth”, er: .04, dy: .5, desc:“Tracks CRSP US Large Cap Growth Index.”, strat:“Large - cap growth companies with above - average appreciation potential.”, hold: [“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Meta”], ret: { y1: 32.5, y3: 10.1, y5: 18.2, y10: 15.8 }, risk:“Moderate - High”, avg: 12.5, sd: 18.2, best: 40.2, worst: -33.3 },
-        QQQ: { t:“QQQ”, nm:“Invesco QQQ Trust”, cat:“US Tech / Growth”, er: .20, dy: .6, desc:“Tracks Nasdaq - 100 Index, heavy tech / innovation weighting.”, strat:“Concentrated tech exposure.Higher risk - reward profile.”, hold: [“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Broadcom”], ret: { y1: 28.7, y3: 11.5, y5: 19.8, y10: 17.9 }, risk:“High”, avg: 13.8, sd: 20.1, best: 54.7, worst: -32.6 },
-        SCHG: { t:“SCHG”, nm:“Schwab U.S.Large - Cap Growth ETF”, cat:“US Large Growth”, er: .04, dy: .4, desc:“Tracks Dow Jones U.S.Large - Cap Growth Index.”, strat:“Low - cost large - cap growth.Similar to VUG with different methodology.”, hold: [“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Meta”], ret: { y1: 33.1, y3: 10.8, y5: 19.0, y10: 16.2 }, risk:“Moderate - High”, avg: 12.8, sd: 18.5, best: 41.5, worst: -34.1 },
-        VTV: { t:“VTV”, nm:“Vanguard Value ETF”, cat:“US Large Value”, er: .04, dy: 2.3, desc:“Tracks CRSP US Large Cap Value Index.”, strat:“Undervalued large - caps providing stability and income with moderate growth.”, hold: [“Berkshire”,“JPMorgan”,“UnitedHealth”,“ExxonMobil”,“P & G”], ret: { y1: 19.8, y3: 8.2, y5: 10.5, y10: 9.8 }, risk:“Moderate”, avg: 9.2, sd: 13.8, best: 30.1, worst: -35.9 },
-        SCHD: { t:“SCHD”, nm:“Schwab U.S.Dividend Equity ETF”, cat:“Dividend”, er: .06, dy: 3.4, desc:“Tracks Dow Jones U.S.Dividend 100 Index.”, strat:“Quality companies with 10 + year dividend history.Excellent for income.”, hold: [“Coca - Cola”,“Verizon”,“PepsiCo”,“Home Depot”,“Cisco”], ret: { y1: 12.5, y3: 6.8, y5: 11.8, y10: 11.2 }, risk:“Low - Moderate”, avg: 10.5, sd: 12.8, best: 29.9, worst: -20.5 },
-        VYM: { t:“VYM”, nm:“Vanguard High Dividend Yield ETF”, cat:“Dividend”, er: .06, dy: 2.8, desc:“Tracks FTSE High Dividend Yield Index.”, strat:“Broad high - dividend exposure.More diversified than SCHD.”, hold: [“Broadcom”,“JPMorgan”,“ExxonMobil”,“P & G”,“Home Depot”], ret: { y1: 18.2, y3: 7.5, y5: 10.2, y10: 9.6 }, risk:“Low - Moderate”, avg: 9.0, sd: 13.2, best: 28.5, worst: -26.1 },
-        VXUS: { t:“VXUS”, nm:“Vanguard Total Intl Stock ETF”, cat:“International”, er: .07, dy: 3.0, desc:“Tracks FTSE Global All Cap ex US Index.”, strat:“7,000 + stocks in 40 + countries.Reduces home - country bias.”, hold: [“Taiwan Semi”,“Novo Nordisk”,“Samsung”,“ASML”,“Nestle”], ret: { y1: 9.8, y3: 3.1, y5: 6.2, y10: 5.1 }, risk:“Moderate - High”, avg: 6.0, sd: 16.5, best: 27.5, worst: -41.2 },
-        BND: { t:“BND”, nm:“Vanguard Total Bond Market ETF”, cat:“US Bonds”, er: .03, dy: 4.3, desc:“Tracks Bloomberg U.S.Aggregate Bond Index.”, strat:“Core fixed income.Ballast for equity volatility.”, hold: [“US Treasuries”,“Agency Bonds”,“Corp Bonds”], ret: { y1: 1.3, y3: -2.1, y5: .3, y10: 1.5 }, risk:“Low”, avg: 3.2, sd: 5.5, best: 8.7, worst: -13.0 },
-        TIP: { t:“TIP”, nm:“iShares TIPS Bond ETF”, cat:“Inflation Protected”, er: .19, dy: 4.8, desc:“Treasury Inflation - Protected Securities.”, strat:“Inflation protection.Principal adjusts with CPI.”, hold: [“TIPS various maturities”], ret: { y1: 1.8, y3: -.5, y5: 2.8, y10: 2.2 }, risk:“Low”, avg: 3.0, sd: 6.2, best: 11.4, worst: -11.8 },
-        VGSH: { t:“VGSH”, nm:“Vanguard Short - Term Treasury ETF”, cat:“Short - Term Bonds”, er: .04, dy: 4.5, desc:“Bloomberg U.S.Treasury 1 - 3 Year Bond Index.”, strat:“Ultra - low duration treasuries.Near - cash stability.”, hold: [“US Treasury Notes 1 - 3yr”], ret: { y1: 3.8, y3: 1.2, y5: 1.8, y10: 1.4 }, risk:“Very Low”, avg: 2.2, sd: 2.1, best: 5.8, worst: -3.8 },
-        SHV: { t:“SHV”, nm:“iShares Short Treasury Bond ETF”, cat:“Cash Equivalent”, er: .15, dy: 5.0, desc:“U.S.Treasury bonds, 1 - 12 month maturities.”, strat:“Near - cash.Minimal interest rate risk.”, hold: [“US T - Bills under 1yr”], ret: { y1: 5.2, y3: 3.5, y5: 2.5, y10: 1.6 }, risk:“Very Low”, avg: 1.8, sd: .8, best: 5.2, worst: 0.0 },
-        VNQ: { t:“VNQ”, nm:“Vanguard Real Estate ETF”, cat:“REITs”, er: .12, dy: 3.8, desc:“MSCI US Real Estate 25 / 50 Index.”, strat:“REITs for income and inflation hedge.”, hold: [“Prologis”,“American Tower”,“Equinix”,“Welltower”,“Simon Property”], ret: { y1: 8.5, y3: 2.1, y5: 5.8, y10: 6.5 }, risk:“Moderate - High”, avg: 8.0, sd: 19.5, best: 37.1, worst: -37.0 }
+var ETFS={
+VTI:{t:“VTI”,nm:“Vanguard Total Stock Market ETF”,cat:“US Total Market”,er:.03,dy:1.3,desc:“Tracks CRSP US Total Market Index covering ~4,000 stocks.”,strat:“Broad exposure to entire U.S. equity market. Core diversified holding.”,hold:[“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Meta”],ret:{y1:26.1,y3:8.9,y5:14.2,y10:12.1},risk:“Moderate”,avg:10.2,sd:15.5,best:33.4,worst:-36.4},
+VUG:{t:“VUG”,nm:“Vanguard Growth ETF”,cat:“US Large Growth”,er:.04,dy:.5,desc:“Tracks CRSP US Large Cap Growth Index.”,strat:“Large-cap growth companies with above-average appreciation potential.”,hold:[“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Meta”],ret:{y1:32.5,y3:10.1,y5:18.2,y10:15.8},risk:“Moderate-High”,avg:12.5,sd:18.2,best:40.2,worst:-33.3},
+QQQ:{t:“QQQ”,nm:“Invesco QQQ Trust”,cat:“US Tech/Growth”,er:.20,dy:.6,desc:“Tracks Nasdaq-100 Index, heavy tech/innovation weighting.”,strat:“Concentrated tech exposure. Higher risk-reward profile.”,hold:[“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Broadcom”],ret:{y1:28.7,y3:11.5,y5:19.8,y10:17.9},risk:“High”,avg:13.8,sd:20.1,best:54.7,worst:-32.6},
+SCHG:{t:“SCHG”,nm:“Schwab U.S. Large-Cap Growth ETF”,cat:“US Large Growth”,er:.04,dy:.4,desc:“Tracks Dow Jones U.S. Large-Cap Growth Index.”,strat:“Low-cost large-cap growth. Similar to VUG with different methodology.”,hold:[“Apple”,“Microsoft”,“NVIDIA”,“Amazon”,“Meta”],ret:{y1:33.1,y3:10.8,y5:19.0,y10:16.2},risk:“Moderate-High”,avg:12.8,sd:18.5,best:41.5,worst:-34.1},
+VTV:{t:“VTV”,nm:“Vanguard Value ETF”,cat:“US Large Value”,er:.04,dy:2.3,desc:“Tracks CRSP US Large Cap Value Index.”,strat:“Undervalued large-caps providing stability and income with moderate growth.”,hold:[“Berkshire”,“JPMorgan”,“UnitedHealth”,“ExxonMobil”,“P&G”],ret:{y1:19.8,y3:8.2,y5:10.5,y10:9.8},risk:“Moderate”,avg:9.2,sd:13.8,best:30.1,worst:-35.9},
+SCHD:{t:“SCHD”,nm:“Schwab U.S. Dividend Equity ETF”,cat:“Dividend”,er:.06,dy:3.4,desc:“Tracks Dow Jones U.S. Dividend 100 Index.”,strat:“Quality companies with 10+ year dividend history. Excellent for income.”,hold:[“Coca-Cola”,“Verizon”,“PepsiCo”,“Home Depot”,“Cisco”],ret:{y1:12.5,y3:6.8,y5:11.8,y10:11.2},risk:“Low-Moderate”,avg:10.5,sd:12.8,best:29.9,worst:-20.5},
+VYM:{t:“VYM”,nm:“Vanguard High Dividend Yield ETF”,cat:“Dividend”,er:.06,dy:2.8,desc:“Tracks FTSE High Dividend Yield Index.”,strat:“Broad high-dividend exposure. More diversified than SCHD.”,hold:[“Broadcom”,“JPMorgan”,“ExxonMobil”,“P&G”,“Home Depot”],ret:{y1:18.2,y3:7.5,y5:10.2,y10:9.6},risk:“Low-Moderate”,avg:9.0,sd:13.2,best:28.5,worst:-26.1},
+VXUS:{t:“VXUS”,nm:“Vanguard Total Intl Stock ETF”,cat:“International”,er:.07,dy:3.0,desc:“Tracks FTSE Global All Cap ex US Index.”,strat:“7,000+ stocks in 40+ countries. Reduces home-country bias.”,hold:[“Taiwan Semi”,“Novo Nordisk”,“Samsung”,“ASML”,“Nestle”],ret:{y1:9.8,y3:3.1,y5:6.2,y10:5.1},risk:“Moderate-High”,avg:6.0,sd:16.5,best:27.5,worst:-41.2},
+BND:{t:“BND”,nm:“Vanguard Total Bond Market ETF”,cat:“US Bonds”,er:.03,dy:4.3,desc:“Tracks Bloomberg U.S. Aggregate Bond Index.”,strat:“Core fixed income. Ballast for equity volatility.”,hold:[“US Treasuries”,“Agency Bonds”,“Corp Bonds”],ret:{y1:1.3,y3:-2.1,y5:.3,y10:1.5},risk:“Low”,avg:3.2,sd:5.5,best:8.7,worst:-13.0},
+TIP:{t:“TIP”,nm:“iShares TIPS Bond ETF”,cat:“Inflation Protected”,er:.19,dy:4.8,desc:“Treasury Inflation-Protected Securities.”,strat:“Inflation protection. Principal adjusts with CPI.”,hold:[“TIPS various maturities”],ret:{y1:1.8,y3:-.5,y5:2.8,y10:2.2},risk:“Low”,avg:3.0,sd:6.2,best:11.4,worst:-11.8},
+VGSH:{t:“VGSH”,nm:“Vanguard Short-Term Treasury ETF”,cat:“Short-Term Bonds”,er:.04,dy:4.5,desc:“Bloomberg U.S. Treasury 1-3 Year Bond Index.”,strat:“Ultra-low duration treasuries. Near-cash stability.”,hold:[“US Treasury Notes 1-3yr”],ret:{y1:3.8,y3:1.2,y5:1.8,y10:1.4},risk:“Very Low”,avg:2.2,sd:2.1,best:5.8,worst:-3.8},
+SHV:{t:“SHV”,nm:“iShares Short Treasury Bond ETF”,cat:“Cash Equivalent”,er:.15,dy:5.0,desc:“U.S. Treasury bonds, 1-12 month maturities.”,strat:“Near-cash. Minimal interest rate risk.”,hold:[“US T-Bills under 1yr”],ret:{y1:5.2,y3:3.5,y5:2.5,y10:1.6},risk:“Very Low”,avg:1.8,sd:.8,best:5.2,worst:0.0},
+VNQ:{t:“VNQ”,nm:“Vanguard Real Estate ETF”,cat:“REITs”,er:.12,dy:3.8,desc:“MSCI US Real Estate 25/50 Index.”,strat:“REITs for income and inflation hedge.”,hold:[“Prologis”,“American Tower”,“Equinix”,“Welltower”,“Simon Property”],ret:{y1:8.5,y3:2.1,y5:5.8,y10:6.5},risk:“Moderate-High”,avg:8.0,sd:19.5,best:37.1,worst:-37.0}
 };
-        var EC = { VTI:”#3b82f6”, VUG:”#8b5cf6”, QQQ:”#ec4899”, SCHG:”#a855f7”, VTV:”#6366f1”, SCHD:”#10b981”, VYM:”#14b8a6”, VXUS:”#f59e0b”, BND:”#64748b”, TIP:”#0ea5e9”, VGSH:”#06b6d4”, SHV:”#84cc16”, VNQ:”#f97316” };
+var EC={VTI:”#3b82f6”,VUG:”#8b5cf6”,QQQ:”#ec4899”,SCHG:”#a855f7”,VTV:”#6366f1”,SCHD:”#10b981”,VYM:”#14b8a6”,VXUS:”#f59e0b”,BND:”#64748b”,TIP:”#0ea5e9”,VGSH:”#06b6d4”,SHV:”#84cc16”,VNQ:”#f97316”};
 
-        var ST = { AL: { n:“Alabama”, r: 4.4 }, AK: { n:“Alaska”, r: 0 }, AZ: { n:“Arizona”, r: 2.5 }, AR: { n:“Arkansas”, r: 4.4 }, CA: { n:“California”, r: 9.3 }, CO: { n:“Colorado”, r: 4.4 }, CT: { n:“Connecticut”, r: 5 }, DE: { n:“Delaware”, r: 5.5 }, FL: { n:“Florida”, r: 0 }, GA: { n:“Georgia”, r: 5.39 }, HI: { n:“Hawaii”, r: 7.2 }, ID: { n:“Idaho”, r: 5.8 }, IL: { n:“Illinois”, r: 4.95 }, IN: { n:“Indiana”, r: 3.05 }, IA: { n:“Iowa”, r: 5.7 }, KS: { n:“Kansas”, r: 5.2 }, KY: { n:“Kentucky”, r: 4 }, LA: { n:“Louisiana”, r: 3.5 }, ME: { n:“Maine”, r: 6.75 }, MD: { n:“Maryland”, r: 5 }, MA: { n:“Massachusetts”, r: 5 }, MI: { n:“Michigan”, r: 4.25 }, MN: { n:“Minnesota”, r: 7.05 }, MS: { n:“Mississippi”, r: 4.7 }, MO: { n:“Missouri”, r: 4.8 }, MT: { n:“Montana”, r: 5.9 }, NE: { n:“Nebraska”, r: 5.84 }, NV: { n:“Nevada”, r: 0 }, NH: { n:“New Hampshire”, r: 0 }, NJ: { n:“New Jersey”, r: 6.37 }, NM: { n:“New Mexico”, r: 4.9 }, NY: { n:“New York”, r: 6.85 }, NC: { n:“N.Carolina”, r: 4.5 }, ND: { n:“N.Dakota”, r: 1.95 }, OH: { n:“Ohio”, r: 3.5 }, OK: { n:“Oklahoma”, r: 4.75 }, OR: { n:“Oregon”, r: 8.75 }, PA: { n:“Pennsylvania”, r: 3.07 }, RI: { n:“Rhode Island”, r: 5 }, SC: { n:“S.Carolina”, r: 6.2 }, SD: { n:“S.Dakota”, r: 0 }, TN: { n:“Tennessee”, r: 0 }, TX: { n:“Texas”, r: 0 }, UT: { n:“Utah”, r: 4.65 }, VT: { n:“Vermont”, r: 6.6 }, VA: { n:“Virginia”, r: 5 }, WA: { n:“Washington”, r: 0 }, WV: { n:“W.Virginia”, r: 5.12 }, WI: { n:“Wisconsin”, r: 5.7 }, WY: { n:“Wyoming”, r: 0 }, DC: { n:“D.C.”, r: 8.5 } };
+var ST={AL:{n:“Alabama”,r:4.4},AK:{n:“Alaska”,r:0},AZ:{n:“Arizona”,r:2.5},AR:{n:“Arkansas”,r:4.4},CA:{n:“California”,r:9.3},CO:{n:“Colorado”,r:4.4},CT:{n:“Connecticut”,r:5},DE:{n:“Delaware”,r:5.5},FL:{n:“Florida”,r:0},GA:{n:“Georgia”,r:5.39},HI:{n:“Hawaii”,r:7.2},ID:{n:“Idaho”,r:5.8},IL:{n:“Illinois”,r:4.95},IN:{n:“Indiana”,r:3.05},IA:{n:“Iowa”,r:5.7},KS:{n:“Kansas”,r:5.2},KY:{n:“Kentucky”,r:4},LA:{n:“Louisiana”,r:3.5},ME:{n:“Maine”,r:6.75},MD:{n:“Maryland”,r:5},MA:{n:“Massachusetts”,r:5},MI:{n:“Michigan”,r:4.25},MN:{n:“Minnesota”,r:7.05},MS:{n:“Mississippi”,r:4.7},MO:{n:“Missouri”,r:4.8},MT:{n:“Montana”,r:5.9},NE:{n:“Nebraska”,r:5.84},NV:{n:“Nevada”,r:0},NH:{n:“New Hampshire”,r:0},NJ:{n:“New Jersey”,r:6.37},NM:{n:“New Mexico”,r:4.9},NY:{n:“New York”,r:6.85},NC:{n:“N. Carolina”,r:4.5},ND:{n:“N. Dakota”,r:1.95},OH:{n:“Ohio”,r:3.5},OK:{n:“Oklahoma”,r:4.75},OR:{n:“Oregon”,r:8.75},PA:{n:“Pennsylvania”,r:3.07},RI:{n:“Rhode Island”,r:5},SC:{n:“S. Carolina”,r:6.2},SD:{n:“S. Dakota”,r:0},TN:{n:“Tennessee”,r:0},TX:{n:“Texas”,r:0},UT:{n:“Utah”,r:4.65},VT:{n:“Vermont”,r:6.6},VA:{n:“Virginia”,r:5},WA:{n:“Washington”,r:0},WV:{n:“W. Virginia”,r:5.12},WI:{n:“Wisconsin”,r:5.7},WY:{n:“Wyoming”,r:0},DC:{n:“D.C.”,r:8.5}};
 
-        var FB = [{ m: 11600, r: 10 }, { m: 47150, r: 12 }, { m: 100525, r: 22 }, { m: 191950, r: 24 }, { m: 243725, r: 32 }, { m: 609350, r: 35 }, { m: 1e15, r: 37 }];
-        var FM = [{ m: 23200, r: 10 }, { m: 94300, r: 12 }, { m: 201050, r: 22 }, { m: 383900, r: 24 }, { m: 487450, r: 32 }, { m: 731200, r: 35 }, { m: 1e15, r: 37 }];
+var FB=[{m:11600,r:10},{m:47150,r:12},{m:100525,r:22},{m:191950,r:24},{m:243725,r:32},{m:609350,r:35},{m:1e15,r:37}];
+var FM=[{m:23200,r:10},{m:94300,r:12},{m:201050,r:22},{m:383900,r:24},{m:487450,r:32},{m:731200,r:35},{m:1e15,r:37}];
 
-        function fmt(n) {
-            if (n == null || isNaN(n)) return “$0”;
-            var a = Math.abs(n);
-            if (a >= 1e6) return (n < 0 ?”-”:””) +”$”+(a / 1e6).toFixed(1) +“M”;
-            return (n < 0 ?”-$”:”$”) +Math.round(a).toLocaleString(“en - US”);
-        }
+function fmt(n){
+if(n==null||isNaN(n))return “$0”;
+var a=Math.abs(n);
+if(a>=1e6)return(n<0?”-”:””)+”$”+(a/1e6).toFixed(1)+“M”;
+return(n<0?”-$”:”$”)+Math.round(a).toLocaleString(“en-US”);
+}
 
-        function fedTax(inc, mfj) {
-            var b = mfj ? FM : FB; var d = mfj ? 29200 : 14600; var tx = Math.max(0, inc - d); var t = 0; var p = 0;
-            for (var i = 0; i < b.length; i++) { if (tx > p) t += (Math.min(tx, b[i].m) - p) * b[i].r / 100; p = b[i].m; }
-            return t;
-        }
+function fedTax(inc,mfj){
+var b=mfj?FM:FB;var d=mfj?29200:14600;var tx=Math.max(0,inc-d);var t=0;var p=0;
+for(var i=0;i<b.length;i++){if(tx>p)t+=(Math.min(tx,b[i].m)-p)*b[i].r/100;p=b[i].m;}
+return t;
+}
 
-        function lifeExp(a) { if (a <= 40) return 82; if (a <= 50) return 83; if (a <= 60) return 84; if (a <= 65) return 85; if (a <= 70) return 86; if (a <= 75) return 87; if (a <= 80) return 89; return 92; }
+function lifeExp(a){if(a<=40)return 82;if(a<=50)return 83;if(a<=60)return 84;if(a<=65)return 85;if(a<=70)return 86;if(a<=75)return 87;if(a<=80)return 89;return 92;}
 
-        function glidePath(yi, total, startAge) {
-            var ca = (startAge || 55) + yi;
-            var aw = Math.min(1, Math.max(0, (ca - 40) / 45));
-            var pw = total <= 1 ? 1 : yi / (total - 1);
-            var t = Math.min(1, Math.max(0, aw * 0.6 + pw * 0.4));
-            var r = { growth: Math.max(0, 0.35 * (1 - t * 1.3)), value: 0.08 + 0.12 * t, dividend: 0.08 + 0.22 * t, intl: Math.max(0.02, 0.15 * (1 - t * 0.8)), reit: Math.max(0.02, 0.08 * (1 - t * 0.5)), bond: 0.10 + 0.18 * t, tips: 0.03 + 0.05 * t, shortBond: 0.04 + 0.14 * t, cash: 0.03 + 0.12 * t };
-            var s = 0; var k = Object.keys(r); for (var i = 0; i < k.length; i++)s += r[k[i]];
-            var n = {}; for (var i = 0; i < k.length; i++)n[k[i]] = r[k[i]] / s; return n;
-        }
+function glidePath(yi,total,startAge){
+var ca=(startAge||55)+yi;
+var aw=Math.min(1,Math.max(0,(ca-40)/45));
+var pw=total<=1?1:yi/(total-1);
+var t=Math.min(1,Math.max(0,aw*0.6+pw*0.4));
+var r={growth:Math.max(0,0.35*(1-t*1.3)),value:0.08+0.12*t,dividend:0.08+0.22*t,intl:Math.max(0.02,0.15*(1-t*0.8)),reit:Math.max(0.02,0.08*(1-t*0.5)),bond:0.10+0.18*t,tips:0.03+0.05*t,shortBond:0.04+0.14*t,cash:0.03+0.12*t};
+var s=0;var k=Object.keys(r);for(var i=0;i<k.length;i++)s+=r[k[i]];
+var n={};for(var i=0;i<k.length;i++)n[k[i]]=r[k[i]]/s;return n;
+}
 
-        function a2e(a) { return { VUG: a.growth * 0.5, QQQ: a.growth * 0.3, SCHG: a.growth * 0.2, VTV: a.value, SCHD: a.dividend * 0.6, VYM: a.dividend * 0.4, VXUS: a.intl, VNQ: a.reit, BND: a.bond, TIP: a.tips, VGSH: a.shortBond, SHV: a.cash }; }
+function a2e(a){return{VUG:a.growth*0.5,QQQ:a.growth*0.3,SCHG:a.growth*0.2,VTV:a.value,SCHD:a.dividend*0.6,VYM:a.dividend*0.4,VXUS:a.intl,VNQ:a.reit,BND:a.bond,TIP:a.tips,VGSH:a.shortBond,SHV:a.cash};}
 
-        function sRet(tk, sc, yi) {
-            var e = ETFS[tk]; if (!e) return 0;
-            var b = e.avg / 100; var sd = e.sd / 100;
-            if (sc ===“best”) return b + sd * 0.65;
-            if (sc ===“worst”) return b - sd * 0.55;
-            if (sc ===“recession”) { if (yi === 0) return b - sd * 1.4; if (yi === 1) return b - sd * 0.6; if (yi === 2) return b + sd * 0.4; return b; }
-            return b;
-        }
+function sRet(tk,sc,yi){
+var e=ETFS[tk];if(!e)return 0;
+var b=e.avg/100;var sd=e.sd/100;
+if(sc===“best”)return b+sd*0.65;
+if(sc===“worst”)return b-sd*0.55;
+if(sc===“recession”){if(yi===0)return b-sd*1.4;if(yi===1)return b-sd*0.6;if(yi===2)return b+sd*0.4;return b;}
+return b;
+}
 
-        var LIQ = [“SHV”,“VGSH”,“BND”,“TIP”,“VYM”,“SCHD”,“VTV”,“VNQ”,“VXUS”,“VUG”,“SCHG”,“QQQ”];
-        var INF = 0.028;
+var LIQ=[“SHV”,“VGSH”,“BND”,“TIP”,“VYM”,“SCHD”,“VTV”,“VNQ”,“VXUS”,“VUG”,“SCHG”,“QQQ”];
+var INF=0.028;
 
-        function calcPlan(inp) {
-            var results = {};
-            var scenarios = [“average”,“best”,“worst”,“recession”];
-            for (var si = 0; si < scenarios.length; si++) {
-                var sc = scenarios[si];
-                var port = inp.initialPortfolio;
-                var yd = [];
-                for (var y = 0; y < inp.horizon; y++) {
-                    var ca = inp.age + y;
-                    var im = Math.pow(1 + INF, y);
-                    var ae = inp.monthlyExpenses * 12 * im;
-                    var ss = ca >= inp.ssAge ? inp.ssMonthly * 12 * Math.pow(1.02, Math.max(0, ca - inp.ssAge)) : 0;
-                    var ei = 0;
-                    for (var xi = 0; xi < inp.extraIncomes.length; xi++) {
-                        var src = inp.extraIncomes[xi];
-                        if (ca >= src.startAge && ca <= src.endAge) ei += src.monthly * 12 * im;
-                    }
-                    var al = glidePath(y, inp.horizon, inp.age);
-                    var ea = a2e(al);
-                    var ek = Object.keys(ea);
-                    var wr = 0; var dyw = 0;
-                    for (var ki = 0; ki < ek.length; ki++) {
-                        wr += ea[ek[ki]] * sRet(ek[ki], sc, y);
-                        dyw += ea[ek[ki]] * (ETFS[ek[ki]] ? ETFS[ek[ki]].dy : 0) / 100;
-                    }
-                    var di = port * dyw;
-                    var pg = port * (wr - dyw);
-                    var shortfall = Math.max(0, ae - ss - ei - di);
+function calcPlan(inp){
+var results={};
+var scenarios=[“average”,“best”,“worst”,“recession”];
+for(var si=0;si<scenarios.length;si++){
+var sc=scenarios[si];
+var port=inp.initialPortfolio;
+var yd=[];
+for(var y=0;y<inp.horizon;y++){
+var ca=inp.age+y;
+var im=Math.pow(1+INF,y);
+var ae=inp.monthlyExpenses*12*im;
+var ss=ca>=inp.ssAge?inp.ssMonthly*12*Math.pow(1.02,Math.max(0,ca-inp.ssAge)):0;
+var ei=0;
+for(var xi=0;xi<inp.extraIncomes.length;xi++){
+var src=inp.extraIncomes[xi];
+if(ca>=src.startAge&&ca<=src.endAge)ei+=src.monthly*12*im;
+}
+var al=glidePath(y,inp.horizon,inp.age);
+var ea=a2e(al);
+var ek=Object.keys(ea);
+var wr=0;var dyw=0;
+for(var ki=0;ki<ek.length;ki++){
+wr+=ea[ek[ki]]*sRet(ek[ki],sc,y);
+dyw+=ea[ek[ki]]*(ETFS[ek[ki]]?ETFS[ek[ki]].dy:0)/100;
+}
+var di=port*dyw;
+var pg=port*(wr-dyw);
+var shortfall=Math.max(0,ae-ss-ei-di);
 
-                    ```
+```
   /* TAX: extra income and SS always taxable; account type affects dividends and withdrawals */
   var taxableIncome=0;
   /* Extra income is ALWAYS taxable regardless of account type */
@@ -758,223 +240,218 @@
 results[sc]=yd;
 ```
 
-                }
-                /* Rebalancing transactions */
-                var txns = [];
-                for (var y = 0; y < inp.horizon; y++) {
-                    var ea = a2e(glidePath(y, inp.horizon, inp.age));
-                    var prevEa = y > 0 ? a2e(glidePath(y - 1, inp.horizon, inp.age)) : null;
-                    var portAtYear = y === 0 ? inp.initialPortfolio : (results.average[y - 1] ? results.average[y - 1].port : 0);
-                    if (portAtYear <= 0) continue;
-                    var row = { yr: y + 1, age: inp.age + y, actions: [] };
-                    var ek = Object.keys(ea);
-                    for (var ki = 0; ki < ek.length; ki++) {
-                        var k = ek[ki];
-                        if (ea[k] < 0.005 && (!prevEa || prevEa[k] < 0.005)) continue;
-                        var curPct = ea[k] * 100;
-                        var prevPct = prevEa ? prevEa[k] * 100 : 0;
-                        var diff = curPct - prevPct;
-                        var dollarAmt = Math.round(portAtYear * Math.abs(diff) / 100);
-                        if (y === 0) {
-                            row.actions.push({ tk: k, type:“buy”, pct: curPct, amt: Math.round(portAtYear * ea[k]) });
-                        } else if (Math.abs(diff) >= 0.3 && dollarAmt >= 100) {
-                            row.actions.push({ tk: k, type: diff > 0 ?“buy”:“sell”, pct: Math.abs(diff), amt: dollarAmt });
-                        }
-                    }
-                    row.actions.sort(function (a, b) { return b.amt - a.amt; });
-                    if (row.actions.length > 0) txns.push(row);
-                }
-                var ia = glidePath(0, inp.horizon, inp.age);
-                return { results: results, ia: ia, ie: a2e(ia), horizon: inp.horizon, inputs: inp, txns: txns };
-            }
-
-            function CC(props) {
-                var cr = useRef(null);
-                var ci = useRef(null);
-                useEffect(function () {
-                    if (!cr.current) return;
-                    if (ci.current) { ci.current.destroy(); }
-                    ci.current = new Chart(cr.current.getContext(“2d”), props.cfg);
-                    return function () { if (ci.current) { ci.current.destroy(); ci.current = null; } };
-                }, [JSON.stringify(props.cfg)]);
-                return h(“div”, { style: { position:“relative”, width:“100%”, height: props.ht || 300 } }, h(“canvas”, { ref: cr }));
-            }
-
-            function Coll(props) {
-                var st = useState(props.open || false); var o = st[0]; var so = st[1];
-                return h(“div”, { style: { marginBottom: 8 } },
-                    h(“div”, { className:“ch”, onClick: function () { so(!o); } },
-                        h(“span”, { className:“ca”+ (o ?” cao”:””)},”\u25B6”),
-            h(“span”, { style: { flex: 1 } }, props.title)),
-            o ? h(“div”, { className:“cb” }, props.children) : null);
-        }
-
-        function EModal(props) {
-            var e = ETFS[props.tk]; if (!e) return null;
-            var rc = {“Very Low”:“var(–success)”,“Low”:“var(–success)”,“Low- Moderate”:“var(–info)”,“Moderate”:“var(–accent)”,“Moderate - High”:“var(–danger)”,“High”:“var(–danger)”
-        };
-        return h(“div”, { className:“mo”, onClick: props.onClose },
-            h(“div”, { className:“mc”, onClick: function (ev) { ev.stopPropagation(); } },
-                h(“button”, { style: { float:“right”, background:“none”, border:“none”, fontSize:“1.5rem”, cursor:“pointer”, color:“var(–text3)”, padding:“4px” }, onClick: props.onClose },”\u00D7”),
-                h(“div”, { style: { display:“flex”, alignItems:“center”, marginBottom: 16 } },
-                    h(“div”, { style: { width: 48, height: 48, borderRadius: 10, background: EC[props.tk] ||”#888”, display:“flex”, alignItems:“center”, justifyContent:“center”, color:”#fff”, fontWeight: 700, fontSize:”.85rem”, marginRight: 12, flexShrink: 0 } }, props.tk),
-                    h(“div”, null, h(“h2”, { style: { fontSize:“1.2rem”, margin: 0 } }, e.nm), h(“span”, { className:“badge bb” }, e.cat))),
-                h(“p”, { style: { color:“var(–text2)”, marginBottom: 16, fontSize:”.9rem” } }, e.desc),
-                h(“h3”, null,“Strategy”), h(“p”, { style: { color:“var(–text2)”, marginBottom: 16, fontSize:”.88rem” } }, e.strat),
-                h(“div”, { className:“g2”, style: { marginBottom: 16 } },
-                    h(“div”, { className:“sc” }, h(“div”, { className:“sl” },“Expense Ratio”), h(“div”, { className:“sv” }, e.er.toFixed(2) +”%”)),
-                    h(“div”, { className:“sc” }, h(“div”, { className:“sl” },“Dividend Yield”), h(“div”, { className:“sv” }, e.dy.toFixed(1) +”%”)),
-                    h(“div”, { className:“sc” }, h(“div”, { className:“sl” },“Risk Level”), h(“div”, { className:“sv”, style: { color: rc[e.risk] ||“var(–text2)”, fontSize:“1.1rem” } }, e.risk)),
-                    h(“div”, { className:“sc” }, h(“div”, { className:“sl” },“Avg Annual Return”), h(“div”, { className:“sv tg” }, e.avg +”%”))),
-                h(“h3”, null,“Historical Returns”),
-                h(“div”, { className:“tw”, style: { marginTop: 8 } }, h(“table”, null,
-                    h(“thead”, null, h(“tr”, null, h(“th”, null,“1Y”), h(“th”, null,“3Y”), h(“th”, null,“5Y”), h(“th”, null,“10Y”), h(“th”, null,“Best”), h(“th”, null,“Worst”))),
-                    h(“tbody”, null, h(“tr”, null,
-                        h(“td”, { className: e.ret.y1 >= 0 ?“tg”:“trd” }, (e.ret.y1 > 0 ?”+”:””) + e.ret.y1 +”%”),
-                        h(“td”, { className: e.ret.y3 >= 0 ?“tg”:“trd” }, (e.ret.y3 > 0 ?”+”:””) + e.ret.y3 +”%”),
-                    h(“td”, { className: e.ret.y5 >= 0 ?“tg”:“trd” }, (e.ret.y5 > 0 ?”+”:””) + e.ret.y5 +”%”),
-                    h(“td”, { className: e.ret.y10 >= 0 ?“tg”:“trd” }, (e.ret.y10 > 0 ?”+”:””) + e.ret.y10 +”%”),
-                h(“td”, { className:“tg” },”+”+e.best +”%”), h(“td”, { className:“trd” }, e.worst +”%”))))),
-        h(“h3”, { style: { marginTop: 16 } },“Top Holdings”),
-            h(“div”, { style: { display:“flex”, flexWrap:“wrap”, marginTop: 8 } }, e.hold.map(function (x, i) { return h(“span”, { key: i, style: { display:“inline- block”, padding:“1px 8px”, borderRadius: 4, fontSize:”.7rem”, fontWeight: 600, background:“var(–surface2)”, border:“1px solid var(–border)”, margin: 3 }}, x);})),
-        h(“p”, { className:“ts”, style: { marginTop: 16, color:“var(–text3)” } },“Std Dev: “+e.sd +”% \u2014 measures typical annual variation from average return.”)));
+}
+/* Rebalancing transactions */
+var txns=[];
+for(var y=0;y<inp.horizon;y++){
+var ea=a2e(glidePath(y,inp.horizon,inp.age));
+var prevEa=y>0?a2e(glidePath(y-1,inp.horizon,inp.age)):null;
+var portAtYear=y===0?inp.initialPortfolio:(results.average[y-1]?results.average[y-1].port:0);
+if(portAtYear<=0)continue;
+var row={yr:y+1,age:inp.age+y,actions:[]};
+var ek=Object.keys(ea);
+for(var ki=0;ki<ek.length;ki++){
+var k=ek[ki];
+if(ea[k]<0.005&&(!prevEa||prevEa[k]<0.005))continue;
+var curPct=ea[k]*100;
+var prevPct=prevEa?prevEa[k]*100:0;
+var diff=curPct-prevPct;
+var dollarAmt=Math.round(portAtYear*Math.abs(diff)/100);
+if(y===0){
+row.actions.push({tk:k,type:“buy”,pct:curPct,amt:Math.round(portAtYear*ea[k])});
+}else if(Math.abs(diff)>=0.3&&dollarAmt>=100){
+row.actions.push({tk:k,type:diff>0?“buy”:“sell”,pct:Math.abs(diff),amt:dollarAmt});
+}
+}
+row.actions.sort(function(a,b){return b.amt-a.amt;});
+if(row.actions.length>0)txns.push(row);
+}
+var ia=glidePath(0,inp.horizon,inp.age);
+return{results:results,ia:ia,ie:a2e(ia),horizon:inp.horizon,inputs:inp,txns:txns};
 }
 
-        function IForm(props) {
-            var saved = loadInputs(); var d = saved || {};
-            var _a = useState(d.age != null ? d.age : 55); var age = _a[0]; var sA = _a[1];
-            var _h = useState(d.hor != null ? String(d.hor) :””); var hor = _h[0]; var sH = _h[1];
-            var _e = useState(d.monthlyExpenses != null ? d.monthlyExpenses : 5000); var mExp = _e[0]; var sE = _e[1];
-            var _st = useState(d.state ||“TX”); var state = _st[0]; var sSt = _st[1];
-            var _sa = useState(d.ssAge != null ? d.ssAge : 67); var ssA = _sa[0]; var sSA = _sa[1];
-            var _sm = useState(d.ssMonthly != null ? d.ssMonthly : 2500); var ssM = _sm[0]; var sSM = _sm[1];
-            var _l = useState(d.desiredLegacy != null ? d.desiredLegacy : 0); var leg = _l[0]; var sL = _l[1];
-            var _at = useState(d.accountType ||“traditional”); var acct = _at[0]; var sAT = _at[1];
-            var _f = useState(d.filing ||“single”); var fil = _f[0]; var sF = _f[1];
-            var _p = useState(d.initialPortfolio != null ? d.initialPortfolio : 800000); var port = _p[0]; var sP = _p[1];
-            var _ei = useState(d.extraIncomes || []); var exs = _ei[0]; var sEI = _ei[1];
-            var _ran = useState(false); var autoRan = _ran[0]; var setAutoRan = _ran[1];
-            var cH = hor ? parseInt(hor, 10) : lifeExp(age) - age;
-
-            useEffect(function () { if (!autoRan) { setAutoRan(true); go(true); }; }, []);
-
-            function addE() { sEI(exs.concat([{ monthly: 1000, startAge: age, endAge: age + 5, label:“Extra Income” }])); }
-            function rmE(i) { sEI(exs.filter(function (_, j) { return j !== i; })); }
-            function upE(i, k, v) { var c = exs.slice(); c[i] = Object.assign({}, c[i]); c[i][k] = k ===“label”?v: Number(v); sEI(c); }
-
-            function go(silent) {
-                if (age < 25 || age > 90) { if (!silent) alert(“Age must be 25 - 90”); return; }
-                if (port < 0) { if (!silent) alert(“Portfolio cannot be negative”); return; }
-                if (mExp <= 0) { if (!silent) alert(“Enter monthly expenses”); return; }
-                var inp = { age: age, horizon: cH, monthlyExpenses: mExp, state: state, ssAge: ssA, ssMonthly: ssM, desiredLegacy: leg, accountType: acct, filing: fil, extraIncomes: exs, initialPortfolio: port, hor: hor ? parseInt(hor, 10) : null };
-                saveInputs(inp);
-                props.onGen(inp);
-            }
-
-            var sOpts = Object.keys(ST).sort(function (a, b) { return ST[a].n.localeCompare(ST[b].n); }).map(function (k) { return h(“option”, { key: k, value: k }, ST[k].n +”(”+ST[k].r +”%)”);
-        });
-
-        return h(“div”, { className:“card” },
-            h(“h2”, { style: { marginBottom: 4 } },“Plan Parameters”),
-            h(“p”, { className:“ts”, style: { marginBottom: 16, color:“var(–text2)” } },“Configure your retirement details.Changes are saved automatically.”),
-            h(“div”, { className:“fr” },
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Current Age”), h(“input”, { type:“number”, className:“fi”, value: age, onChange: function (e) { sA(+e.target.value); }, min: 25, max: 90 })),
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Horizon(years)”), h(“input”, { type:“number”, className:“fi”, value: hor, onChange: function (e) { sH(e.target.value); }, placeholder: cH +” (life exp.)”, min: 1, max: 60}))),
-            h(“div”, { className:“fr” },
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Portfolio Value($)”), h(“input”, { type:“number”, className:“fi”, value: port, onChange: function (e) { sP(+e.target.value); }, min: 0, step: 10000 })),
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Monthly Expenses($)”), h(“input”, { type:“number”, className:“fi”, value: mExp, onChange: function (e) { sE(+e.target.value); }, min: 0, step: 100 }))),
-            h(“div”, { className:“fr” },
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“State”), h(“select”, { className:“fi”, value: state, onChange: function (e) { sSt(e.target.value); } }, sOpts)),
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Filing Status”), h(“select”, { className:“fi”, value: fil, onChange: function (e) { sF(e.target.value); } }, h(“option”, { value:“single” },“Single”), h(“option”, { value:“married” },“Married Filing Jointly”)))),
-            h(“div”, { className:“fr” },
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“SS Start Age”), h(“select”, { className:“fi”, value: ssA, onChange: function (e) { sSA(+e.target.value); } },
-                    [62, 63, 64, 65, 66, 67, 68, 69, 70].map(function (a) { return h(“option”, { key: a, value: a }, a); }))),
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“SS Monthly($)”), h(“input”, { type:“number”, className:“fi”, value: ssM, onChange: function (e) { sSM(+e.target.value); }, min: 0, step: 100 }))),
-            h(“div”, { className:“fr” },
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Account Type”), h(“select”, { className:“fi”, value: acct, onChange: function (e) { sAT(e.target.value); } }, h(“option”, { value:“traditional” },“Traditional IRA / 401(k)”), h(“option”, { value:“roth” },“Roth IRA / 401(k)”), h(“option”, { value:“taxable” },“Taxable Brokerage”))),
-                h(“div”, { className:“fg” }, h(“label”, { className:“fl” },“Legacy Value($)”), h(“input”, { type:“number”, className:“fi”, value: leg, onChange: function (e) { sL(+e.target.value); }, min: 0, step: 10000 }))),
-            h(“div”, { className:“dv” }),
-            h(“div”, { style: { display:“flex”, alignItems:“center”, justifyContent:“space- between”, marginBottom: 12, flexWrap:“wrap” }},
-                h(“h3”, { style: { margin:“4px 0” } },“Additional Income”), h(“button”, { className:“btn btn2 btns”, style: { margin:“4px 0” }, onClick: addE },”+ Add Income”)),
-            exs.map(function (ei, i) {
-                return h(“div”, { key: i, className:“is” },
-                    h(“div”, { className:“if” },
-                        h(“div”, { className:“fg”, style: { margin: 0 } }, h(“label”, { className:“fl” },“Label”), h(“input”, { className:“fi”, value: ei.label, onChange: function (e) { upE(i,“label”, e.target.value); } })),
-                        h(“div”, { className:“fg”, style: { margin: 0 } }, h(“label”, { className:“fl” },”$ / Mo”), h(“input”, { type:“number”, className:“fi”, value: ei.monthly, onChange: function (e) { upE(i,“monthly”, e.target.value); }, min: 0 })),
-                        h(“div”, { className:“fg”, style: { margin: 0 } }, h(“label”, { className:“fl” },“Start”), h(“input”, { type:“number”, className:“fi”, value: ei.startAge, onChange: function (e) { upE(i,“startAge”, e.target.value); } })),
-                        h(“div”, { className:“fg”, style: { margin: 0 } }, h(“label”, { className:“fl” },“End”), h(“input”, { type:“number”, className:“fi”, value: ei.endAge, onChange: function (e) { upE(i,“endAge”, e.target.value); } }))),
-                    h(“button”, { style: { background:“none”, border:“none”, color:“var(–danger)”, cursor:“pointer”, fontSize:“1.2rem”, padding:“4px 8px” }, onClick: function () { rmE(i); } },”\u2715”));
-            }),
-            h(“div”, { style: { marginTop: 20 } }, h(“button”, { className:“btn btn1”, onClick: function () { go(false); }, style: { width:“100%”, padding:“14px 24px”, fontSize:“1rem” } }, props.gen ?“Generating plan…”:“Generate Retirement Plan”)));
+function CC(props){
+var cr=useRef(null);
+var ci=useRef(null);
+useEffect(function(){
+if(!cr.current)return;
+if(ci.current){ci.current.destroy();}
+ci.current=new Chart(cr.current.getContext(“2d”),props.cfg);
+return function(){if(ci.current){ci.current.destroy();ci.current=null;}};
+},[JSON.stringify(props.cfg)]);
+return h(“div”,{style:{position:“relative”,width:“100%”,height:props.ht||300}},h(“canvas”,{ref:cr}));
 }
 
-        function Results(props) {
-            var plan = props.plan; var inp = plan.inputs;
-            var _s = useState(“average”); var sc = _s[0]; var setSc = _s[1];
-            var _m = useState(null); var modal = _m[0]; var setM = _m[1];
-            var _sa = useState(false); var showAll = _sa[0]; var setSA = _sa[1];
-            var _st = useState(false); var showTxn = _st[0]; var setST = _st[1];
-            var pr = useRef(null);
-            var d = plan.results[sc]; var last = d[d.length - 1];
-            var depI = d.findIndex(function (y) { return y.port <= 0; }); var dep = depI >= 0;
-            var summ = [“best”,“average”,“worst”,“recession”].map(function (s) {
-                var dd = plan.results[s]; var l = dd[dd.length - 1]; var di = dd.findIndex(function (y) { return y.port <= 0; });
-                return { s: s, fv: l ? l.port : 0, dep: di >= 0, da: di >= 0 ? dd[di].age : null };
-            });
-            var etfKeys = Object.keys(plan.ie).filter(function (k) { return plan.ie[k] > 0.005; }).sort(function (a, b) { return plan.ie[b] - plan.ie[a]; });
-            var rbc = {“Very Low”:“bg”,“Low”:“bg”,“Low- Moderate”:“bb”,“Moderate”:“ba”,“Moderate-High”:“br”,“High”:“br”
-        };
-        var displayYrs = showAll ? d : d.filter(function (y, i) { return i < 5 || i >= d.length - 3 || i % 5 === 0; });
-        var totTax = d.reduce(function (s, y) { return s + y.tTax; }, 0);
-        var totInc = d.reduce(function (s, y) { return s + y.totInc; }, 0);
-        var ssRec = inp.ssAge < 67 ?“Claiming SS early reduces your benefit.Each year you delay (up to 70) increases it ~8 %.”: inp.ssAge >= 70 ?“Claiming at 70 maximizes your benefit.”:“Claiming at full retirement age is a balanced approach.”;
-        var txRec = inp.accountType ===“traditional”?“Consider Roth conversions in low - income years to reduce future RMDs.”: inp.accountType ===“roth”?“Roth accounts offer tax - free growth.Extra income is still taxable.”:“Hold assets > 1yr for long - term capital gains rates.”;
+function Coll(props){
+var st=useState(props.open||false);var o=st[0];var so=st[1];
+return h(“div”,{style:{marginBottom:8}},
+h(“div”,{className:“ch”,onClick:function(){so(!o);}},
+h(“span”,{className:“ca”+(o?” cao”:””)},”\u25B6”),
+h(“span”,{style:{flex:1}},props.title)),
+o?h(“div”,{className:“cb”},props.children):null);
+}
 
-        var actCfg = useMemo(function () {
-            var dd = plan.results[sc];
-            var cl = { average:”#2d5a3d”, best:”#10b981”, worst:”#c0392b”, recession:”#f59e0b” };
-            return { type:“line”, data: { labels: dd.map(function (y) { return y.age; }), datasets: [{ label:“Portfolio”, data: dd.map(function (y) { return y.port; }), borderColor: cl[sc], backgroundColor: cl[sc] +“15”, fill: true, borderWidth: 2.5, pointRadius: 0, tension: 0.3}] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return fmt(c.parsed.y); } } } }, scales: { y: { ticks: { callback: function(v) { return fmt(v); }, font: { size: 10 } }, grid: { color:”#ddd9d3” } }, x: { title: { display: true, text:“Age”, font: { size: 11 } }, ticks: { font: { size: 10 }, maxTicksLimit: 15 }, grid: { display: false } } } }
-        };
-}, [plan, sc]);
+function EModal(props){
+var e=ETFS[props.tk];if(!e)return null;
+var rc={“Very Low”:“var(–success)”,“Low”:“var(–success)”,“Low-Moderate”:“var(–info)”,“Moderate”:“var(–accent)”,“Moderate-High”:“var(–danger)”,“High”:“var(–danger)”};
+return h(“div”,{className:“mo”,onClick:props.onClose},
+h(“div”,{className:“mc”,onClick:function(ev){ev.stopPropagation();}},
+h(“button”,{style:{float:“right”,background:“none”,border:“none”,fontSize:“1.5rem”,cursor:“pointer”,color:“var(–text3)”,padding:“4px”},onClick:props.onClose},”\u00D7”),
+h(“div”,{style:{display:“flex”,alignItems:“center”,marginBottom:16}},
+h(“div”,{style:{width:48,height:48,borderRadius:10,background:EC[props.tk]||”#888”,display:“flex”,alignItems:“center”,justifyContent:“center”,color:”#fff”,fontWeight:700,fontSize:”.85rem”,marginRight:12,flexShrink:0}},props.tk),
+h(“div”,null,h(“h2”,{style:{fontSize:“1.2rem”,margin:0}},e.nm),h(“span”,{className:“badge bb”},e.cat))),
+h(“p”,{style:{color:“var(–text2)”,marginBottom:16,fontSize:”.9rem”}},e.desc),
+h(“h3”,null,“Strategy”),h(“p”,{style:{color:“var(–text2)”,marginBottom:16,fontSize:”.88rem”}},e.strat),
+h(“div”,{className:“g2”,style:{marginBottom:16}},
+h(“div”,{className:“sc”},h(“div”,{className:“sl”},“Expense Ratio”),h(“div”,{className:“sv”},e.er.toFixed(2)+”%”)),
+h(“div”,{className:“sc”},h(“div”,{className:“sl”},“Dividend Yield”),h(“div”,{className:“sv”},e.dy.toFixed(1)+”%”)),
+h(“div”,{className:“sc”},h(“div”,{className:“sl”},“Risk Level”),h(“div”,{className:“sv”,style:{color:rc[e.risk]||“var(–text2)”,fontSize:“1.1rem”}},e.risk)),
+h(“div”,{className:“sc”},h(“div”,{className:“sl”},“Avg Annual Return”),h(“div”,{className:“sv tg”},e.avg+”%”))),
+h(“h3”,null,“Historical Returns”),
+h(“div”,{className:“tw”,style:{marginTop:8}},h(“table”,null,
+h(“thead”,null,h(“tr”,null,h(“th”,null,“1Y”),h(“th”,null,“3Y”),h(“th”,null,“5Y”),h(“th”,null,“10Y”),h(“th”,null,“Best”),h(“th”,null,“Worst”))),
+h(“tbody”,null,h(“tr”,null,
+h(“td”,{className:e.ret.y1>=0?“tg”:“trd”},(e.ret.y1>0?”+”:””)+e.ret.y1+”%”),
+h(“td”,{className:e.ret.y3>=0?“tg”:“trd”},(e.ret.y3>0?”+”:””)+e.ret.y3+”%”),
+h(“td”,{className:e.ret.y5>=0?“tg”:“trd”},(e.ret.y5>0?”+”:””)+e.ret.y5+”%”),
+h(“td”,{className:e.ret.y10>=0?“tg”:“trd”},(e.ret.y10>0?”+”:””)+e.ret.y10+”%”),
+h(“td”,{className:“tg”},”+”+e.best+”%”),h(“td”,{className:“trd”},e.worst+”%”))))),
+h(“h3”,{style:{marginTop:16}},“Top Holdings”),
+h(“div”,{style:{display:“flex”,flexWrap:“wrap”,marginTop:8}},e.hold.map(function(x,i){return h(“span”,{key:i,style:{display:“inline-block”,padding:“1px 8px”,borderRadius:4,fontSize:”.7rem”,fontWeight:600,background:“var(–surface2)”,border:“1px solid var(–border)”,margin:3}},x);})),
+h(“p”,{className:“ts”,style:{marginTop:16,color:“var(–text3)”}},“Std Dev: “+e.sd+”% \u2014 measures typical annual variation from average return.”)));
+}
 
-        var incCfg = useMemo(function () {
-            var dd = plan.results[sc];
-            return { type:“bar”, data: { labels: dd.map(function (y) { return y.age; }), datasets: [{ label:“Social Security”, data: dd.map(function (y) { return y.ss; }), backgroundColor:”#3b82f6”},{ label:“Dividends”, data: dd.map(function (y) { return y.div; }), backgroundColor:”#10b981” }, { label:“Extra Income”, data: dd.map(function (y) { return y.extra; }), backgroundColor:”#f59e0b” }, { label:“Withdrawal”, data: dd.map(function (y) { return y.wd; }), backgroundColor:“rgba(192, 57, 43, 0.7)” }]
-        }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:“bottom”, labels: { font: { family:“DM Sans”, size: 11 } } }, tooltip: { callbacks: { label: function (c) { return c.dataset.label +”: “+fmt(c.parsed.y); } } } }, scales: { x: { stacked: true, ticks: { font: { size: 10 }, maxTicksLimit: 15 }, grid: { display: false } }, y: { stacked: true, ticks: { callback: function (v) { return fmt(v); }, font: { size: 10 } }, grid: { color:”#ddd9d3” } } } }};
-}, [plan, sc]);
+function IForm(props){
+var saved=loadInputs();var d=saved||{};
+var _a=useState(d.age!=null?d.age:55);var age=_a[0];var sA=_a[1];
+var _h=useState(d.hor!=null?String(d.hor):””);var hor=_h[0];var sH=_h[1];
+var _e=useState(d.monthlyExpenses!=null?d.monthlyExpenses:5000);var mExp=_e[0];var sE=_e[1];
+var _st=useState(d.state||“TX”);var state=_st[0];var sSt=_st[1];
+var _sa=useState(d.ssAge!=null?d.ssAge:67);var ssA=_sa[0];var sSA=_sa[1];
+var _sm=useState(d.ssMonthly!=null?d.ssMonthly:2500);var ssM=_sm[0];var sSM=_sm[1];
+var _l=useState(d.desiredLegacy!=null?d.desiredLegacy:0);var leg=_l[0];var sL=_l[1];
+var _at=useState(d.accountType||“traditional”);var acct=_at[0];var sAT=_at[1];
+var _f=useState(d.filing||“single”);var fil=_f[0];var sF=_f[1];
+var _p=useState(d.initialPortfolio!=null?d.initialPortfolio:800000);var port=_p[0];var sP=_p[1];
+var _ei=useState(d.extraIncomes||[]);var exs=_ei[0];var sEI=_ei[1];
+var _ran=useState(false);var autoRan=_ran[0];var setAutoRan=_ran[1];
+var cH=hor?parseInt(hor,10):lifeExp(age)-age;
 
-        var allocCfg = useMemo(function () {
-            var dd = plan.results.average;
-            var cats = [“growth”,“value”,“dividend”,“intl”,“reit”,“bond”,“tips”,“shortBond”,“cash”];
-            var cn = [“Growth”,“Value”,“Dividend”,“Intl”,“REITs”,“Bonds”,“TIPS”,“Short Bonds”,“Cash”];
-            var cc = [”#8b5cf6”,”#6366f1”,”#10b981”,”#f59e0b”,”#f97316”,”#64748b”,”#0ea5e9”,”#06b6d4”,”#84cc16”];
-            return { type:“line”, data: { labels: dd.map(function (y) { return y.age; }), datasets: cats.map(function (c, i) { return { label: cn[i], data: dd.map(function (y) { return Math.round(y.alloc[c] * 1000) / 10; }), backgroundColor: cc[i] +“cc”, borderColor: cc[i], fill: true, borderWidth: 1, pointRadius: 0, tension: 0.3 }; }) }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:“bottom”, labels: { font: { family:“DM Sans”, size: 10 } } }, tooltip: { callbacks: { label: function (c) { return c.dataset.label +”: “+c.parsed.y.toFixed(1) +”%”; } } } }, scales: { x: { ticks: { font: { size: 10 }, maxTicksLimit: 15 }, grid: { display: false } }, y: { stacked: true, max: 100, ticks: { callback: function (v) { return v +”%”; }, font: { size: 10 } }, grid: { color:”#ddd9d3” } } } } };
-        }, [plan]);
+useEffect(function(){if(!autoRan){setAutoRan(true);go(true);};},[]);
 
-        function exportPDF() {
-            var el = pr.current; if (!el) return;
-            var cl = el.cloneNode(true);
-            var nps = cl.querySelectorAll(”.np”); for (var i = 0; i < nps.length; i++)nps[i].parentNode.removeChild(nps[i]);
-            document.body.appendChild(cl); cl.style.cssText =“width: 1000px; position: absolute; left: -9999px; top: 0”;
-            html2canvas(cl, { scale: 1.5, useCORS: true, backgroundColor:”#faf8f6”, windowWidth: 1000 }).then(function (canvas) {
-                document.body.removeChild(cl);
-                var img = canvas.toDataURL(“image / jpeg”, 0.8);
-                var pdf = new jspdf.jsPDF(“p”,“mm”,“a4”);
-                var pw = pdf.internal.pageSize.getWidth() - 20;
-                var ph = pdf.internal.pageSize.getHeight() - 20;
-                var iw = pw; var ih = canvas.height * iw / canvas.width; var pos = 0; var hl = ih;
-                pdf.addImage(img,“JPEG”, 10, 10, iw, ih); hl -= ph;
-                while (hl > 0) { pos -= ph; pdf.addPage(); pdf.addImage(img,“JPEG”, 10, pos + 10, iw, ih); hl -= ph; }
-                pdf.save(“retirement - plan.pdf”);
-            })[“catch”](function (e) { alert(“PDF error: “+e.message); });
-        }
+function addE(){sEI(exs.concat([{monthly:1000,startAge:age,endAge:age+5,label:“Extra Income”}]));}
+function rmE(i){sEI(exs.filter(function(_,j){return j!==i;}));}
+function upE(i,k,v){var c=exs.slice();c[i]=Object.assign({},c[i]);c[i][k]=k===“label”?v:Number(v);sEI(c);}
 
-        var txnDisplay = showTxn ? plan.txns : plan.txns.filter(function (t, i) { return i === 0 || i % 5 === 0 || i === plan.txns.length - 1; });
+function go(silent){
+if(age<25||age>90){if(!silent)alert(“Age must be 25-90”);return;}
+if(port<0){if(!silent)alert(“Portfolio cannot be negative”);return;}
+if(mExp<=0){if(!silent)alert(“Enter monthly expenses”);return;}
+var inp={age:age,horizon:cH,monthlyExpenses:mExp,state:state,ssAge:ssA,ssMonthly:ssM,desiredLegacy:leg,accountType:acct,filing:fil,extraIncomes:exs,initialPortfolio:port,hor:hor?parseInt(hor,10):null};
+saveInputs(inp);
+props.onGen(inp);
+}
 
-        return h(“div”, { ref: pr },
-            modal ? h(EModal, { tk: modal, onClose: function () { setM(null); } }) : null,
+var sOpts=Object.keys(ST).sort(function(a,b){return ST[a].n.localeCompare(ST[b].n);}).map(function(k){return h(“option”,{key:k,value:k},ST[k].n+” (”+ST[k].r+”%)”);});
 
-            ```
+return h(“div”,{className:“card”},
+h(“h2”,{style:{marginBottom:4}},“Plan Parameters”),
+h(“p”,{className:“ts”,style:{marginBottom:16,color:“var(–text2)”}},“Configure your retirement details. Changes are saved automatically.”),
+h(“div”,{className:“fr”},
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Current Age”),h(“input”,{type:“number”,className:“fi”,value:age,onChange:function(e){sA(+e.target.value);},min:25,max:90})),
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Horizon (years)”),h(“input”,{type:“number”,className:“fi”,value:hor,onChange:function(e){sH(e.target.value);},placeholder:cH+” (life exp.)”,min:1,max:60}))),
+h(“div”,{className:“fr”},
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Portfolio Value ($)”),h(“input”,{type:“number”,className:“fi”,value:port,onChange:function(e){sP(+e.target.value);},min:0,step:10000})),
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Monthly Expenses ($)”),h(“input”,{type:“number”,className:“fi”,value:mExp,onChange:function(e){sE(+e.target.value);},min:0,step:100}))),
+h(“div”,{className:“fr”},
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“State”),h(“select”,{className:“fi”,value:state,onChange:function(e){sSt(e.target.value);}},sOpts)),
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Filing Status”),h(“select”,{className:“fi”,value:fil,onChange:function(e){sF(e.target.value);}},h(“option”,{value:“single”},“Single”),h(“option”,{value:“married”},“Married Filing Jointly”)))),
+h(“div”,{className:“fr”},
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“SS Start Age”),h(“select”,{className:“fi”,value:ssA,onChange:function(e){sSA(+e.target.value);}},
+[62,63,64,65,66,67,68,69,70].map(function(a){return h(“option”,{key:a,value:a},a);}))),
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“SS Monthly ($)”),h(“input”,{type:“number”,className:“fi”,value:ssM,onChange:function(e){sSM(+e.target.value);},min:0,step:100}))),
+h(“div”,{className:“fr”},
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Account Type”),h(“select”,{className:“fi”,value:acct,onChange:function(e){sAT(e.target.value);}},h(“option”,{value:“traditional”},“Traditional IRA/401(k)”),h(“option”,{value:“roth”},“Roth IRA/401(k)”),h(“option”,{value:“taxable”},“Taxable Brokerage”))),
+h(“div”,{className:“fg”},h(“label”,{className:“fl”},“Legacy Value ($)”),h(“input”,{type:“number”,className:“fi”,value:leg,onChange:function(e){sL(+e.target.value);},min:0,step:10000}))),
+h(“div”,{className:“dv”}),
+h(“div”,{style:{display:“flex”,alignItems:“center”,justifyContent:“space-between”,marginBottom:12,flexWrap:“wrap”}},
+h(“h3”,{style:{margin:“4px 0”}},“Additional Income”),h(“button”,{className:“btn btn2 btns”,style:{margin:“4px 0”},onClick:addE},”+ Add Income”)),
+exs.map(function(ei,i){
+return h(“div”,{key:i,className:“is”},
+h(“div”,{className:“if”},
+h(“div”,{className:“fg”,style:{margin:0}},h(“label”,{className:“fl”},“Label”),h(“input”,{className:“fi”,value:ei.label,onChange:function(e){upE(i,“label”,e.target.value);}})),
+h(“div”,{className:“fg”,style:{margin:0}},h(“label”,{className:“fl”},”$/Mo”),h(“input”,{type:“number”,className:“fi”,value:ei.monthly,onChange:function(e){upE(i,“monthly”,e.target.value);},min:0})),
+h(“div”,{className:“fg”,style:{margin:0}},h(“label”,{className:“fl”},“Start”),h(“input”,{type:“number”,className:“fi”,value:ei.startAge,onChange:function(e){upE(i,“startAge”,e.target.value);}})),
+h(“div”,{className:“fg”,style:{margin:0}},h(“label”,{className:“fl”},“End”),h(“input”,{type:“number”,className:“fi”,value:ei.endAge,onChange:function(e){upE(i,“endAge”,e.target.value);}}))),
+h(“button”,{style:{background:“none”,border:“none”,color:“var(–danger)”,cursor:“pointer”,fontSize:“1.2rem”,padding:“4px 8px”},onClick:function(){rmE(i);}},”\u2715”));
+}),
+h(“div”,{style:{marginTop:20}},h(“button”,{className:“btn btn1”,onClick:function(){go(false);},style:{width:“100%”,padding:“14px 24px”,fontSize:“1rem”}},props.gen?“Generating plan…”:“Generate Retirement Plan”)));
+}
+
+function Results(props){
+var plan=props.plan;var inp=plan.inputs;
+var _s=useState(“average”);var sc=_s[0];var setSc=_s[1];
+var _m=useState(null);var modal=_m[0];var setM=_m[1];
+var _sa=useState(false);var showAll=_sa[0];var setSA=_sa[1];
+var _st=useState(false);var showTxn=_st[0];var setST=_st[1];
+var pr=useRef(null);
+var d=plan.results[sc];var last=d[d.length-1];
+var depI=d.findIndex(function(y){return y.port<=0;});var dep=depI>=0;
+var summ=[“best”,“average”,“worst”,“recession”].map(function(s){
+var dd=plan.results[s];var l=dd[dd.length-1];var di=dd.findIndex(function(y){return y.port<=0;});
+return{s:s,fv:l?l.port:0,dep:di>=0,da:di>=0?dd[di].age:null};
+});
+var etfKeys=Object.keys(plan.ie).filter(function(k){return plan.ie[k]>0.005;}).sort(function(a,b){return plan.ie[b]-plan.ie[a];});
+var rbc={“Very Low”:“bg”,“Low”:“bg”,“Low-Moderate”:“bb”,“Moderate”:“ba”,“Moderate-High”:“br”,“High”:“br”};
+var displayYrs=showAll?d:d.filter(function(y,i){return i<5||i>=d.length-3||i%5===0;});
+var totTax=d.reduce(function(s,y){return s+y.tTax;},0);
+var totInc=d.reduce(function(s,y){return s+y.totInc;},0);
+var ssRec=inp.ssAge<67?“Claiming SS early reduces your benefit. Each year you delay (up to 70) increases it ~8%.”:inp.ssAge>=70?“Claiming at 70 maximizes your benefit.”:“Claiming at full retirement age is a balanced approach.”;
+var txRec=inp.accountType===“traditional”?“Consider Roth conversions in low-income years to reduce future RMDs.”:inp.accountType===“roth”?“Roth accounts offer tax-free growth. Extra income is still taxable.”:“Hold assets >1yr for long-term capital gains rates.”;
+
+var actCfg=useMemo(function(){
+var dd=plan.results[sc];
+var cl={average:”#2d5a3d”,best:”#10b981”,worst:”#c0392b”,recession:”#f59e0b”};
+return{type:“line”,data:{labels:dd.map(function(y){return y.age;}),datasets:[{label:“Portfolio”,data:dd.map(function(y){return y.port;}),borderColor:cl[sc],backgroundColor:cl[sc]+“15”,fill:true,borderWidth:2.5,pointRadius:0,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return fmt(c.parsed.y);}}}},scales:{y:{ticks:{callback:function(v){return fmt(v);},font:{size:10}},grid:{color:”#ddd9d3”}},x:{title:{display:true,text:“Age”,font:{size:11}},ticks:{font:{size:10},maxTicksLimit:15},grid:{display:false}}}}};
+},[plan,sc]);
+
+var incCfg=useMemo(function(){
+var dd=plan.results[sc];
+return{type:“bar”,data:{labels:dd.map(function(y){return y.age;}),datasets:[{label:“Social Security”,data:dd.map(function(y){return y.ss;}),backgroundColor:”#3b82f6”},{label:“Dividends”,data:dd.map(function(y){return y.div;}),backgroundColor:”#10b981”},{label:“Extra Income”,data:dd.map(function(y){return y.extra;}),backgroundColor:”#f59e0b”},{label:“Withdrawal”,data:dd.map(function(y){return y.wd;}),backgroundColor:“rgba(192,57,43,0.7)”}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:“bottom”,labels:{font:{family:“DM Sans”,size:11}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+”: “+fmt(c.parsed.y);}}}},scales:{x:{stacked:true,ticks:{font:{size:10},maxTicksLimit:15},grid:{display:false}},y:{stacked:true,ticks:{callback:function(v){return fmt(v);},font:{size:10}},grid:{color:”#ddd9d3”}}}}};
+},[plan,sc]);
+
+var allocCfg=useMemo(function(){
+var dd=plan.results.average;
+var cats=[“growth”,“value”,“dividend”,“intl”,“reit”,“bond”,“tips”,“shortBond”,“cash”];
+var cn=[“Growth”,“Value”,“Dividend”,“Intl”,“REITs”,“Bonds”,“TIPS”,“Short Bonds”,“Cash”];
+var cc=[”#8b5cf6”,”#6366f1”,”#10b981”,”#f59e0b”,”#f97316”,”#64748b”,”#0ea5e9”,”#06b6d4”,”#84cc16”];
+return{type:“line”,data:{labels:dd.map(function(y){return y.age;}),datasets:cats.map(function(c,i){return{label:cn[i],data:dd.map(function(y){return Math.round(y.alloc[c]*1000)/10;}),backgroundColor:cc[i]+“cc”,borderColor:cc[i],fill:true,borderWidth:1,pointRadius:0,tension:0.3};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:“bottom”,labels:{font:{family:“DM Sans”,size:10}}},tooltip:{callbacks:{label:function(c){return c.dataset.label+”: “+c.parsed.y.toFixed(1)+”%”;}}}},scales:{x:{ticks:{font:{size:10},maxTicksLimit:15},grid:{display:false}},y:{stacked:true,max:100,ticks:{callback:function(v){return v+”%”;},font:{size:10}},grid:{color:”#ddd9d3”}}}}};
+},[plan]);
+
+function exportPDF(){
+var el=pr.current;if(!el)return;
+var cl=el.cloneNode(true);
+var nps=cl.querySelectorAll(”.np”);for(var i=0;i<nps.length;i++)nps[i].parentNode.removeChild(nps[i]);
+document.body.appendChild(cl);cl.style.cssText=“width:1000px;position:absolute;left:-9999px;top:0”;
+html2canvas(cl,{scale:1.5,useCORS:true,backgroundColor:”#faf8f6”,windowWidth:1000}).then(function(canvas){
+document.body.removeChild(cl);
+var img=canvas.toDataURL(“image/jpeg”,0.8);
+var pdf=new jspdf.jsPDF(“p”,“mm”,“a4”);
+var pw=pdf.internal.pageSize.getWidth()-20;
+var ph=pdf.internal.pageSize.getHeight()-20;
+var iw=pw;var ih=canvas.height*iw/canvas.width;var pos=0;var hl=ih;
+pdf.addImage(img,“JPEG”,10,10,iw,ih);hl-=ph;
+while(hl>0){pos-=ph;pdf.addPage();pdf.addImage(img,“JPEG”,10,pos+10,iw,ih);hl-=ph;}
+pdf.save(“retirement-plan.pdf”);
+})[“catch”](function(e){alert(“PDF error: “+e.message);});
+}
+
+var txnDisplay=showTxn?plan.txns:plan.txns.filter(function(t,i){return i===0||i%5===0||i===plan.txns.length-1;});
+
+return h(“div”,{ref:pr},
+modal?h(EModal,{tk:modal,onClose:function(){setM(null);}}):null,
+
+```
 h("div",{className:"card"},
   h("div",{className:"card-hdr"},h("h2",null,"Plan Summary"),h("button",{className:"btn btn2 btns np",onClick:exportPDF},"Export PDF")),
   h("div",{className:"g4"},
@@ -1100,45 +577,44 @@ h("div",{className:"card"},
   h("p",{className:"ts",style:{marginTop:16,color:"var(--text2)"}},inp.accountType==="roth"?"Roth: qualified withdrawals are tax-free. Extra income and SS are still taxable.":inp.accountType==="traditional"?"Traditional: all withdrawals, dividends, extra income, and partial SS are taxable.":"Taxable: capital gains, dividends, extra income, and partial SS are taxable."))
 ```
 
-        );
+);
 }
 
-        function App() {
-            var _p = useState(null); var plan = _p[0]; var sP = _p[1];
-            var _g = useState(false); var gen = _g[0]; var sG = _g[1];
-            var rr = useRef(null);
-            function onGen(inp) {
-                sG(true);
-                setTimeout(function () {
-                    sP(calcPlan(inp)); sG(false);
-                    setTimeout(function () { if (rr.current) rr.current.scrollIntoView({ behavior:“smooth” }); }, 100);
-                }, 100);
-            }
-            return h(“div”, null,
-                h(“div”, { className:“hero” },
-                    h(“h1”, null,“Retirement “, h(“span”, { className:“ha” },“Account Planner”)),
-                    h(“p”, null,“ETF - based investing, tax - aware projections, and scenario analysis.”)),
-                h(“div”, { className:“ctr” },
-                    h(Coll, { title:“How to Use This Tool” },
-                        h(“p”, { style: { color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“Retirement Account Planner”),” generates a personalized retirement plan.Your inputs are saved locally and restored automatically.”),
-                        h(“p”, { style: { marginTop: 8, color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“Inputs:”),” Enter your age, portfolio, expenses, Social Security details, account type, and state.”),
-                        h(“p”, { style: { marginTop: 8, color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“ETF Allocation:”),” Diversified low - cost ETFs that shift from growth to income over your horizon.”),
-                        h(“p”, { style: { marginTop: 8, color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“Scenarios:”),” Best Case, Average, Worst Case, and Recession.”),
-                        h(“p”, { style: { marginTop: 8, color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“Rebalancing:”),” Concrete buy / sell transactions for each year.”),
-            h(“p”, { style: { marginTop: 12, fontStyle:“italic”, color:“var(–text3)” } },“Disclaimer: For educational purposes only.Not financial advice.Consult a qualified advisor.”)),
-            h(Coll, { title:“About the ETF Selections” },
-                h(“p”, { style: { color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“Growth(VUG, SCHG, QQQ):”),” Large - cap growth and tech. “, h(“strong”, { style: { color:“var(–text)” } },“Value / Dividend(VTV, SCHD, VYM):”),” Income and stability. “, h(“strong”, { style: { color:“var(–text)” } },“International(VXUS):”),” 40 + countries. “, h(“strong”, { style: { color:“var(–text)” } },“Fixed Income(BND, VGSH, TIP):”),” Bonds and inflation protection. “, h(“strong”, { style: { color:“var(–text)” } },“Real Estate(VNQ):”),” REITs. “, h(“strong”, { style: { color:“var(–text)” } },“Cash(SHV):”),” Ultra - short treasuries.”)),
-                h(Coll, { title:“Understanding Scenarios” },
-                    h(“p”, { style: { color:“var(–text2)” } }, h(“strong”, { style: { color:“var(–text)” } },“Average:”),” Historical norms. “, h(“strong”, { style: { color:“var(–text)” } },“Best:”),” ~80th percentile. “, h(“strong”, { style: { color:“var(–text)” } },“Worst:”),” ~20th percentile. “, h(“strong”, { style: { color:“var(–text)” } },“Recession:”),” Severe downturn in first 2 years, then recovery.”)),
-                h(“div”, { style: { marginTop: 20 } }),
-                h(IForm, { onGen: onGen, gen: gen }),
-                plan ? h(“div”, { ref: rr, style: { marginTop: 24 } }, h(Results, { plan: plan })) : null,
-                h(“div”, { style: { textAlign:“center”, padding:“32px 0”, color:“var(–text3)”, fontSize:”.8rem” } },“Retirement Account Planner \u2014 For educational purposes only.”)));
-        }
+function App(){
+var _p=useState(null);var plan=_p[0];var sP=_p[1];
+var _g=useState(false);var gen=_g[0];var sG=_g[1];
+var rr=useRef(null);
+function onGen(inp){
+sG(true);
+setTimeout(function(){
+sP(calcPlan(inp));sG(false);
+setTimeout(function(){if(rr.current)rr.current.scrollIntoView({behavior:“smooth”});},100);
+},100);
+}
+return h(“div”,null,
+h(“div”,{className:“hero”},
+h(“h1”,null,“Retirement “,h(“span”,{className:“ha”},“Account Planner”)),
+h(“p”,null,“ETF-based investing, tax-aware projections, and scenario analysis.”)),
+h(“div”,{className:“ctr”},
+h(Coll,{title:“How to Use This Tool”},
+h(“p”,{style:{color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“Retirement Account Planner”),” generates a personalized retirement plan. Your inputs are saved locally and restored automatically.”),
+h(“p”,{style:{marginTop:8,color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“Inputs:”),” Enter your age, portfolio, expenses, Social Security details, account type, and state.”),
+h(“p”,{style:{marginTop:8,color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“ETF Allocation:”),” Diversified low-cost ETFs that shift from growth to income over your horizon.”),
+h(“p”,{style:{marginTop:8,color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“Scenarios:”),” Best Case, Average, Worst Case, and Recession.”),
+h(“p”,{style:{marginTop:8,color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“Rebalancing:”),” Concrete buy/sell transactions for each year.”),
+h(“p”,{style:{marginTop:12,fontStyle:“italic”,color:“var(–text3)”}},“Disclaimer: For educational purposes only. Not financial advice. Consult a qualified advisor.”)),
+h(Coll,{title:“About the ETF Selections”},
+h(“p”,{style:{color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“Growth (VUG, SCHG, QQQ):”),” Large-cap growth and tech. “,h(“strong”,{style:{color:“var(–text)”}},“Value/Dividend (VTV, SCHD, VYM):”),” Income and stability. “,h(“strong”,{style:{color:“var(–text)”}},“International (VXUS):”),” 40+ countries. “,h(“strong”,{style:{color:“var(–text)”}},“Fixed Income (BND, VGSH, TIP):”),” Bonds and inflation protection. “,h(“strong”,{style:{color:“var(–text)”}},“Real Estate (VNQ):”),” REITs. “,h(“strong”,{style:{color:“var(–text)”}},“Cash (SHV):”),” Ultra-short treasuries.”)),
+h(Coll,{title:“Understanding Scenarios”},
+h(“p”,{style:{color:“var(–text2)”}},h(“strong”,{style:{color:“var(–text)”}},“Average:”),” Historical norms. “,h(“strong”,{style:{color:“var(–text)”}},“Best:”),” ~80th percentile. “,h(“strong”,{style:{color:“var(–text)”}},“Worst:”),” ~20th percentile. “,h(“strong”,{style:{color:“var(–text)”}},“Recession:”),” Severe downturn in first 2 years, then recovery.”)),
+h(“div”,{style:{marginTop:20}}),
+h(IForm,{onGen:onGen,gen:gen}),
+plan?h(“div”,{ref:rr,style:{marginTop:24}},h(Results,{plan:plan})):null,
+h(“div”,{style:{textAlign:“center”,padding:“32px 0”,color:“var(–text3)”,fontSize:”.8rem”}},“Retirement Account Planner \u2014 For educational purposes only.”)));
+}
 
-        ReactDOM.render(h(App), document.getElementById(“root”));
-    </script>
+ReactDOM.render(h(App),document.getElementById(“root”));
+</script>
 
 </body>
-
 </html>
